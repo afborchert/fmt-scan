@@ -10,29 +10,15 @@ regular expressions. To compile it, you need a compiler
 for C++11 and the pcre2 library from http://www.pcre.org/.
 
 A regular expression specifies how much input is to be
-read. If not specified, the regular expressions are
-greedy but `".*"` does not match a newline, `"\n"` has to
-be given explicitly. See
-   http://www.pcre.org/current/doc/html/pcre2pattern.html
+read. The expression is considered to be anchored, i.e.
+scanning stops as soon as the input is not matched by
+the pattern. This means that to be skipped input must
+be explicitly specified by the regular expression.
+
+See http://www.pcre.org/current/doc/html/pcre2pattern.html
 for a comprehensive manual page covering the syntax of
-support regular expressions which is quite similar to
-those supported by Perl. Internally, following options
-of pcre2 are used:
-
- * `PCRE2_ANCHORED`, i.e. scanning stops as soon as the
-   input is not matched by the pattern. To be skipped
-   input must be specified by the pattern.
-
- * `PCRE2_MULTILINE`, i.e. `"^"` and `"$"` match the beginning
-   and end of a line. This library assumes the begin of
-   the current input to be at the beginning of a line.
-   However, if the character preceding it is still available
-   from the input buffer, a beginning of a line is assumed
-   if and only if it is either a linefeed or carriage return.
-
- * `PCRE2_BSR_ANYCRLF`, i.e. `\R` matches only CR, LF, or CRLF.
-   This behaviour can be overwritten within the pattern,
-   i.e. `"(*ANY)"` includes also all Unicode newline sequences.
+support regular expressions which is derived from
+those supported by Perl.
 
 Subpatterns that are enclosed in parentheses are considered
 as captures where the corresponding matched substring is
@@ -182,6 +168,23 @@ restore the state of the input stream to the original state. This is
 trivial if the buffer was not refilled but is impossible when the buffer
 was refilled (due to a partial match) and if the stream does not allow to
 move back to the original position.
+
+Internally, following options of pcre2 are used:
+
+ * `PCRE2_ANCHORED`, i.e. scanning stops as soon as the
+   input is not matched by the pattern. To be skipped
+   input must be specified by the pattern.
+
+ * `PCRE2_MULTILINE`, i.e. `"^"` and `"$"` match the beginning
+   and end of a line. This library assumes the begin of
+   the current input to be at the beginning of a line.
+   However, if the character preceding it is still available
+   from the input buffer, a beginning of a line is assumed
+   if and only if it is either a linefeed or carriage return.
+
+ * `PCRE2_BSR_ANYCRLF`, i.e. `\R` matches only CR, LF, or CRLF.
+   This behaviour can be overwritten within the pattern,
+   i.e. `"(*ANY)"` includes also all Unicode newline sequences.
 
 ## License
 
