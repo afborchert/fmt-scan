@@ -82,8 +82,8 @@ by a callout. Example: "(\d+)(?C)".
 Where necessary, a callout capture can be marked with
 an integer or a string:
 
-   `(?C17)`          callout capture with number 17
-   `(?C"val")`       callout with name "val"
+ * `(?C17)`          callout capture with number 17
+ * `(?C"val")`       callout with name "val"
 
 For callouts function objects are to be used which
 accept as parameter a capture object with following
