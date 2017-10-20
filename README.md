@@ -90,6 +90,7 @@ accept as parameter a capture object with following
 components:
 
 ```C++
+   template<typename CharT>
    struct capture {
       const CharT* s;
       std::size_t len;
