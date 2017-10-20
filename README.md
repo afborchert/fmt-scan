@@ -157,6 +157,31 @@ invoking
 
 right at the beginning of _main_.
 
+## Implementation notices
+
+Reading under the direction of a regular expression is non-trivial.
+Most regular expression libraries including those of the C++ standard
+support just pattern matching on a fixed-size buffer. They tell you if
+the pattern is matched or not but they do not help you to decide if more
+input is required to match it. This is called a partial match and this
+is fortunately supported by the pcre libraries by Philip Hazel.
+
+The other point is that this is best done directly on the internal
+buffer of a buffered stream. `std::basic_streambuf` offers the necessary
+interface which is unfortunately protected. This problem has been solved
+by copy-constructing another streambuf from the original streambuf which
+causes the pointers to be copied but not the buffer contents itself. This
+permits to pass the input buffer directly to the regular expression
+engine. In case of a partial match, however, we have no option but to
+copy the partially matched buffer as neither the stream buffers nor the
+pcre2 library operate with multiple buffers.
+
+If finally the pattern does not match, the library makes a best effort to
+restore the state of the input stream to the original state. This is
+trivial if the buffer was not refilled but is impossible when the buffer
+was refilled (due to a partial match) and if the stream does not allow to
+move back to the original position.
+
 ## License
 
 This package is available under the terms of
