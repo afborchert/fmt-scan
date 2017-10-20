@@ -1,9 +1,10 @@
-# fmt-scan
-fmt::scan allows to process formatted input from a stream using regular expressions
+# fmt::scan
+fmt::scan allows to process formatted input from a stream
+using regular expressions
 
 ## Summary
 
-This header-only C++11 package provides fmt::scan which
+This header-only C++11 package provides `fmt::scan` which
 allows to process formatted input from a stream using
 regular expressions. To compile it, you need a compiler
 for C++11 and the pcre2 library from http://www.pcre.org/.
