@@ -131,6 +131,7 @@ supported. Numerical conversions are done using
 `std::num_get`. One of the few differences is that
 conversions of numerical values support NaN and Inf, making
 them more compatible to the corresponding output operators.
+(However, NaN and Inf are not yet supported for std::complex.)
 
 ## Limitations
 
@@ -164,13 +165,13 @@ is fortunately supported by the pcre libraries by Philip Hazel.
 
 The other point is that this is best done directly on the internal
 buffer of a buffered stream. `std::basic_streambuf` offers the necessary
-interface which is unfortunately protected. This problem has been solved
-by copy-constructing another streambuf from the original streambuf which
-causes the pointers to be copied but not the buffer contents itself. This
-permits to pass the input buffer directly to the regular expression
-engine. In case of a partial match, however, we have no option but to
-copy the partially matched buffer as neither the stream buffers nor the
-pcre2 library operate with multiple buffers.
+interface. But these methods are unfortunately protected. This problem
+has been solved by copy-constructing another streambuf from the original
+streambuf which causes the pointers to be copied but not the buffer
+contents itself. This permits to pass the input buffer directly to the
+regular expression engine. In case of a partial match, however, we have
+no option but to copy the partially matched buffer as neither the stream
+buffers nor the pcre2 library operate with multiple buffers.
 
 If finally the pattern does not match, the library makes a best effort to
 restore the state of the input stream to the original state. This is
