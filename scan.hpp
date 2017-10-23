@@ -1110,7 +1110,9 @@ copy_capture(std::basic_istream<CharT, Traits>& in,
    std::ios_base::iostate err = std::ios_base::goodbit;
    long int long_value;
    f.get(sptr, sptr + len, in, err, long_value);
-   if (err == std::ios_base::goodbit || err == std::ios_base::eofbit) {
+   if ((err == std::ios_base::goodbit || err == std::ios_base::eofbit) &&
+	 long_value >= std::numeric_limits<T>::min() &&
+	 long_value <= std::numeric_limits<T>::max()) {
       value = static_cast<T>(long_value);
       return true;
    } else {
