@@ -119,9 +119,18 @@ This may cause the callout to be invoked behind the last line
 as `(.*)` may match the empty string and `(?C)` was given in
 front of \n which is not found.
 
-The return value of the function object determines whether
-pattern matching continues or is to be aborted with
-`fmt::scan_with_callouts` returning -1.
+The function object returns a _bool_ value. When _true_ is
+returned, matching continues. Otherwise, the scanning process
+is aborted and `fmt::scan_with_callouts` returns -1.
+
+## Conversions
+
+Conversions are done directly from the input buffer, whenever
+possible. All input operators and I/O manipulators are
+supported. Numerical conversions are done using
+`std::num_get`. One of the few differences is that
+conversions of numerical values support NaN and Inf, making
+them more compatible to the corresponding output operators.
 
 ## Limitations
 
@@ -199,3 +208,5 @@ within your project and `#include` it.
 
 The source file `test_suite.cpp` is a test suite
 for `fmt::scan` and the Makefile helps to compile it.
+You will need [`fmt::printf`](https://github.com/afborchert/fmt)
+for the test suite.
