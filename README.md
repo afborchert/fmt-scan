@@ -153,7 +153,7 @@ invoking
 
 right at the beginning of _main_.
 
-## Implementation notices
+## Implementation notes
 
 Reading under the direction of a regular expression is non-trivial.
 Most regular expression libraries including those of the C++ standard
@@ -194,6 +194,12 @@ Internally, following options of pcre2 are used:
  * `PCRE2_BSR_ANYCRLF`, i.e. `\R` matches only CR, LF, or CRLF.
    This behaviour can be overwritten within the pattern,
    i.e. `"(*ANY)"` includes also all Unicode newline sequences.
+
+By default, just-in-time compilation (JIT) by pcre2 is
+enabled. You can suppress this by either invoking the
+`disable_jit` method on the _fmt::regex_ object or by
+not using an _fmt::regex_ object at all but passing the
+regular expression as string to _fmt::scan_.
 
 ## License
 
