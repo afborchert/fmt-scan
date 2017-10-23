@@ -462,6 +462,64 @@ void run_integer_tests() {
    }
 }
 
+template<typename CharT, typename T>
+typename std::enable_if<
+   std::is_signed<T>::value && std::is_integral<T>::value &&
+   sizeof(T) < sizeof(std::intmax_t)
+>::type
+run_out_of_range_integer_tests() {
+   std::intmax_t values[] = {
+      static_cast<std::intmax_t>(std::numeric_limits<T>::min()) - 1,
+      static_cast<std::intmax_t>(std::numeric_limits<T>::min()) - 10,
+      static_cast<std::intmax_t>(std::numeric_limits<T>::max()) + 1,
+      static_cast<std::intmax_t>(std::numeric_limits<T>::max()) + 10,
+   };
+   for (auto val: values) {
+      ++testcases;
+      std::basic_ostringstream<CharT> os;
+      fmt::printf(os, decfmt<CharT>()(), val);
+      auto len = os.str().size(); auto buf = os.str().c_str();
+      T value{};
+      fmt::regex<CharT> re{tokenre<CharT>()()};
+      auto result = fmt::scan_from_buf<CharT>(buf, len, re, value);
+      if (result <= 0) {
+	 ++success;
+      } else {
+	 ++broken;
+	 fmt::printf("fmt::scan_from_buf returns %d and value %d for "
+	    "out-of-range signed input %d\n", result, value, val);
+      }
+   }
+}
+
+template<typename CharT, typename T>
+typename std::enable_if<
+   !std::is_signed<T>::value && std::is_integral<T>::value &&
+   sizeof(T) < sizeof(std::uintmax_t)
+>::type
+run_out_of_range_integer_tests() {
+   std::uintmax_t values[] = {
+      static_cast<std::uintmax_t>(std::numeric_limits<T>::max()) + 1,
+      static_cast<std::uintmax_t>(std::numeric_limits<T>::max()) + 10,
+   };
+   for (auto val: values) {
+      ++testcases;
+      std::basic_ostringstream<CharT> os;
+      fmt::printf(os, decfmt<CharT>()(), val);
+      auto len = os.str().size(); auto buf = os.str().c_str();
+      T value{};
+      fmt::regex<CharT> re{tokenre<CharT>()()};
+      auto result = fmt::scan_from_buf<CharT>(buf, len, re, value);
+      if (result <= 0) {
+	 ++success;
+      } else {
+	 ++broken;
+	 fmt::printf("fmt::scan_from_buf returns %d and value %d for "
+	    "out-of-range unsigned input %d\n", result, value, val);
+      }
+   }
+}
+
 template<typename T>
 void run_float_tests() {
    T values[] = {0, -0.0, -1, 42, 1234.5678, 1.25E-10, 3E+10,
@@ -627,6 +685,19 @@ int main() {
    run_integer_tests<wchar_t, unsigned long>();
    run_integer_tests<wchar_t, long long>();
    run_integer_tests<wchar_t, unsigned long long>();
+
+   run_out_of_range_integer_tests<char, short>();
+   run_out_of_range_integer_tests<char, int>();
+   run_out_of_range_integer_tests<char, long>();
+   run_out_of_range_integer_tests<char, unsigned short>();
+   run_out_of_range_integer_tests<char, unsigned int>();
+   run_out_of_range_integer_tests<char, unsigned long>();
+   run_out_of_range_integer_tests<wchar_t, short>();
+   run_out_of_range_integer_tests<wchar_t, int>();
+   run_out_of_range_integer_tests<wchar_t, long>();
+   run_out_of_range_integer_tests<wchar_t, unsigned short>();
+   run_out_of_range_integer_tests<wchar_t, unsigned int>();
+   run_out_of_range_integer_tests<wchar_t, unsigned long>();
 
    run_float_tests<float>();
    run_float_tests<double>();
