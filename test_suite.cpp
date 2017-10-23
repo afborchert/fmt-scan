@@ -27,6 +27,7 @@
    test suite for "scan.hpp"
 */
 
+#include <complex>
 #include <cstdlib>
 #include <iostream>
 #include <limits>
@@ -538,6 +539,32 @@ void run_float_tests() {
    }
 }
 
+template<typename T>
+void run_complex_tests() {
+   T values[] = {0, -0.0, -1, 42, 1234.5678, 1.25E-10, 3E+10,
+      std::numeric_limits<T>::min(),
+      std::numeric_limits<T>::max(),
+      std::numeric_limits<T>::lowest(),
+      std::numeric_limits<T>::epsilon()};
+   for (auto re: values) {
+      for (auto im: values) {
+	 std::complex<T> value(re, im);
+	 std::ostringstream os;
+	 fmt::printf(os, "(%.*g, %.*g)",
+	    std::numeric_limits<T>::max_digits10, re,
+	    std::numeric_limits<T>::max_digits10, im);
+	 test_scan(os.str().c_str(), R"(\s*(.*))", value);
+      }
+      for (auto format: {"%.*g", "(%.*g)"}) {
+	 std::complex<T> value(re);
+	 std::ostringstream os;
+	 fmt::printf(os, format,
+	    std::numeric_limits<T>::max_digits10, re);
+	 test_scan(os.str().c_str(), R"(\s*(.*))", value);
+      }
+   }
+}
+
 template<typename CharT, typename Traits, typename... Values>
 bool test_skip_from_stream(std::basic_string<CharT, Traits> input,
       std::basic_string<CharT, Traits> pattern,
@@ -702,6 +729,8 @@ int main() {
    run_float_tests<float>();
    run_float_tests<double>();
    run_float_tests<long double>();
+
+   run_complex_tests<float>();
 
    test_skip("17x", R"(\d+)", 0, 2);
    test_skip("x", R"(\d+)", -1, 0);
