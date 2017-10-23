@@ -921,8 +921,8 @@ struct get_quiet_nan {
 template<typename CharT, typename Traits = std::char_traits<CharT>>
 class mem_streambuf: public std::basic_streambuf<CharT, Traits> {
    public:
-      mem_streambuf(CharT* buf, std::size_t len) :
-	    buf(buf), len(len), pos(0) {
+      mem_streambuf(const CharT* buf, std::size_t len) :
+	    buf(buf), pos(0), len(len) {
 	 set_pointers(0);
       }
    protected:
@@ -954,9 +954,12 @@ class mem_streambuf: public std::basic_streambuf<CharT, Traits> {
    private:
       void set_pointers(std::size_t newpos) {
 	 pos = newpos;
-	 this->setg(buf, buf + pos, buf + len);
+	 /* setg requires a non-const CharT* without actually
+	    modifying anything */
+	 CharT* ptr = const_cast<CharT*>(buf);
+	 this->setg(ptr, ptr + pos, ptr + len);
       }
-      CharT* buf;
+      const CharT* buf;
       std::size_t pos; /* position of the beginning of the current buf */
       std::size_t len; /* total input length */
 };
