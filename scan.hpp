@@ -590,9 +590,7 @@ class regex {
       regex() : errorcode(0), erroroffset(PCRE2_UNSET), codeptr(nullptr),
 	    jit(false), suppress_jit(false) {
       }
-      regex(const CharT* pattern, std::size_t length, uint32_t options = 0)
-	    throw(regex_error, std::bad_alloc)
-	    :
+      regex(const CharT* pattern, std::size_t length, uint32_t options = 0) :
 	    errorcode(0), erroroffset(PCRE2_UNSET),
 	    codeptr(
 	       pcre2_compile(
@@ -689,7 +687,7 @@ class match_result {
 	    match_context_ptr(nullptr), jit_stack_ptr(nullptr),
 	    count(0), ovector(nullptr) {
       }
-      match_result(const regex<CharT>& re) throw(std::bad_alloc) :
+      match_result(const regex<CharT>& re) :
 	    codeptr(re.codeptr), match_data_ptr(nullptr),
 	    match_context_ptr(nullptr), jit_stack_ptr(nullptr),
 	    count(0), ovector(nullptr) {
@@ -792,8 +790,7 @@ class match_result {
       std::size_t size() const {
 	 return count;
       }
-      std::pair<std::size_t, std::size_t> operator()(std::size_t index) const
-	    throw(std::range_error) {
+      std::pair<std::size_t, std::size_t> operator()(std::size_t index) const {
 	 if (index >= count)
 	    throw std::range_error("match_result ovector index out of range");
 	 return std::make_pair(
