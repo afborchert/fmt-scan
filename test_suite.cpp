@@ -715,16 +715,12 @@ int main() {
 
    run_out_of_range_integer_tests<char, short>();
    run_out_of_range_integer_tests<char, int>();
-   run_out_of_range_integer_tests<char, long>();
    run_out_of_range_integer_tests<char, unsigned short>();
    run_out_of_range_integer_tests<char, unsigned int>();
-   run_out_of_range_integer_tests<char, unsigned long>();
    run_out_of_range_integer_tests<wchar_t, short>();
    run_out_of_range_integer_tests<wchar_t, int>();
-   run_out_of_range_integer_tests<wchar_t, long>();
    run_out_of_range_integer_tests<wchar_t, unsigned short>();
    run_out_of_range_integer_tests<wchar_t, unsigned int>();
-   run_out_of_range_integer_tests<wchar_t, unsigned long>();
 
    run_float_tests<float>();
    run_float_tests<double>();
