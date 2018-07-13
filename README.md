@@ -28,7 +28,7 @@ wanted, "?:" can be inserted behind the opening "(" to
 suppress this feature. Example: `"(?:fred)*"` scans arbitrary
 sequences of "fred" strings without capturing them.
 
-Following example shows how an input lines can be read
+Following example shows how input lines can be read
 from the stream _in_ without capturing the line terminator:
 
 ```C++
