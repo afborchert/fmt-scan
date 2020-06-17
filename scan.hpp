@@ -1239,6 +1239,17 @@ integer scan_from_unbuffered_stream(std::basic_istream<CharT, Traits>& in,
    }
 }
 
+
+template<typename CharT, typename Traits>
+void advance(std::basic_streambuf<CharT, Traits>* sbuf,
+      typename Traits::off_type count) {
+   if (sbuf->pubseekoff(count, std::ios_base::cur, std::ios_base::in) < 0) {
+      while (count > 0) {
+	 sbuf->snextc(); --count;
+      }
+   }
+}
+
 /* common scan routine which is used by fmt::scan and fmt::scan_with_callouts;
    if inputbufptr is non-null it is used whenever an additional input buffer
    is required; all pointers passed to process_captures point either into
@@ -1271,7 +1282,7 @@ integer scan(std::basic_istream<CharT, Traits>& in,
    if (res >= 0) {
       integer result = process_captures(begin);
       auto len = mr.length();
-      in.rdbuf()->pubseekoff(len, std::ios_base::cur, std::ios_base::in);
+      advance(in.rdbuf(), len);
       return result;
    }
    if (res != partial_match) return -1;
@@ -1300,7 +1311,7 @@ integer scan(std::basic_istream<CharT, Traits>& in,
       CharT lastch = inputbuf.back();
       bol = lastch == '\n' || lastch == '\r';
       /* skip the current input buffer */
-      in.rdbuf()->pubseekoff(end - begin, std::ios_base::cur, std::ios_base::in);
+      advance(in.rdbuf(), end - begin);
       seek_offset += end - begin;
       /* trigger an underflow operation */
       in.rdbuf()->sgetc();
@@ -1317,15 +1328,13 @@ integer scan(std::basic_istream<CharT, Traits>& in,
 	 /* we are done, no more input is required */
 	 auto len = mr.length();
 	 if (len >= oldlen) {
-	    in.rdbuf()->pubseekoff(len - oldlen, std::ios_base::cur,
-	       std::ios_base::in);
+	    advance(in.rdbuf(), len - oldlen);
 	 }
 	 return process_captures(inputbuf.c_str());
       }
       if (res != partial_match) {
 	 /* try to go back to original input position, if possible */
-	 in.rdbuf()->pubseekoff(-seek_offset, std::ios_base::cur,
-	    std::ios_base::in);
+	 advance(in.rdbuf(), -seek_offset);
 	 return -1;
       }
    }
